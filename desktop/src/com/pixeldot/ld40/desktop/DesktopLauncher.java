@@ -2,11 +2,23 @@ package com.pixeldot.ld40.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.pixeldot.ld40.LDGame;
+import com.pixeldot.ld40.Metro;
 
 public class DesktopLauncher {
+
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new LDGame(), config);
+
+		// Window size
+		config.height = Metro.W_HEIGHT;
+		config.width = Metro.W_WIDTH;
+
+		// Prevent resizing of the window
+		config.resizable = false;
+
+		// Stop error code 255 when closing
+		config.forceExit = false;
+
+		new LwjglApplication(new Metro(), config);
 	}
 }
