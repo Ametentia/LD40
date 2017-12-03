@@ -16,6 +16,8 @@ public class DesktopLauncher {
 		// Prevent resizing of the window
 		config.resizable = false;
 
+		config.vSyncEnabled = true;
+
 		// Stop error code 255 when closing
 		config.forceExit = false;
 

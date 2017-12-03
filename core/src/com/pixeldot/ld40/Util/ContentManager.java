@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class ContentManager {
@@ -61,7 +62,7 @@ public class ContentManager {
             return textures.get(name);
         }
 
-        Texture texture = new Texture(path);
+        Texture texture = new Texture("Textures/" + path);
         textures.put(name, texture);
 
         return texture;
@@ -73,11 +74,12 @@ public class ContentManager {
             return fonts.get(name);
         }
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(path));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/" + path));
 
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
         param.flip = true;
         param.size = size;
+        param.hinting = FreeTypeFontGenerator.Hinting.Full;
 
         BitmapFont font = generator.generateFont(param);
 
@@ -94,7 +96,7 @@ public class ContentManager {
             return sounds.get(name);
         }
 
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal(path));
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/" + path));
         sounds.put(name, sound);
 
         return sound;
@@ -106,7 +108,7 @@ public class ContentManager {
             return music.get(name);
         }
 
-        Music m = Gdx.audio.newMusic(Gdx.files.internal(path));
+        Music m = Gdx.audio.newMusic(Gdx.files.internal("Music/" + path));
         music.put(name, m);
 
         return m;
@@ -143,5 +145,27 @@ public class ContentManager {
 
         Music m =  music.get(name);
         m.dispose();
+    }
+
+    public void Dispose() {
+        for(Texture t : textures.values()) {
+            t.dispose();
+        }
+        textures.clear();
+
+        for(BitmapFont f : fonts.values()) {
+            f.dispose();
+        }
+        fonts.clear();
+
+        for(Sound s : sounds.values()) {
+            s.dispose();
+        }
+        sounds.clear();
+
+        for(Music m : music.values()) {
+            m.dispose();
+        }
+        music.clear();
     }
 }
