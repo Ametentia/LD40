@@ -56,7 +56,8 @@ public class Metro extends ApplicationAdapter {
 	}
 
     public void render () {
-		Gdx.gl.glClearColor((100.f / 255.f), (149.f / 255.f), (237.f / 255.f), 1);
+		// Gdx.gl.glClearColor((100.f / 255.f), (149.f / 255.f), (237.f / 255.f), 1); // Corflower Blue
+		Gdx.gl.glClearColor(128.f / 255.f, 128.f / 255.f, 128.f / 255.f, 1f);
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 

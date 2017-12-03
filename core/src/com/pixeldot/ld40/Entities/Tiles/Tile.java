@@ -26,9 +26,9 @@ public class Tile {
     private TileType type;
 
     public Tile(TileType type, int x, int y) {
-        String name = type.name();
+        String name = "Tile_" + type.name();
         if(type == TileType.Blank) {
-            name = "Blank" + ((int)(Math.random() + 0.5) + 1);
+            name = "Tile_Blank" + ((int)(Math.random() + 0.5) + 1);
         }
 
         sprite = new Sprite(ContentManager.Instance.GetTexture(name));
@@ -64,9 +64,9 @@ public class Tile {
 
     public void setType(TileType type) {
         this.type = type;
-        String name = type.name();
+        String name = "Tile_" + type.name();
         if(type == TileType.Blank) {
-            name = "Blank" + ((int)(Math.random() + 0.5) + 1);
+            name = "Tile_Blank" + ((int)(Math.random() + 0.5) + 1);
         }
 
         sprite = new Sprite(ContentManager.Instance.GetTexture(name));

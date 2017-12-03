@@ -3,7 +3,9 @@ package com.pixeldot.ld40.State;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pixeldot.ld40.Entities.Player;
@@ -26,6 +28,11 @@ public class Play extends State {
     private boolean moving;
 
     private BitmapFont font;
+
+    // UI Textures
+    private Texture uiPollution;
+    private Texture uiPower;
+    private Texture uiMoney;
 
     private Tile[][] grid;
     private Player player;
@@ -155,11 +162,39 @@ public class Play extends State {
             }
         }
 
+        batch.end();
+
+        renderer.setProjectionMatrix(hudCamera.combined);
+        renderer.setColor(Color.GREEN);
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        renderer.rect(10, 15, uiPower.getWidth() / 5.7f, uiPower.getHeight() / 7f);
+        renderer.rect(10 + uiPower.getWidth() / 5.7f, 15, uiPower.getWidth() / 5.7f, uiPower.getHeight() / 5f);
+        renderer.rect(10 +
+                uiPower.getWidth() / 5.7f +
+                45, 15,
+                uiPower.getWidth() / 5.7f, uiPower.getHeight() / 4.8f);
+
+        renderer.end();
+
         batch.setProjectionMatrix(hudCamera.combined);
+        batch.begin();
         mouse.set(camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0)));
         font.draw(batch, player.toString(), W_WIDTH - 200, 20);
 
+        batch.draw(uiPower, 0, 0, uiPower.getWidth() / 2f,
+                uiPower.getHeight() / 2f, 0, 0, uiPower.getWidth(), uiPower.getHeight(), false, true);
+
+        batch.draw(uiPollution, 0, uiPower.getHeight() / 2f - 5, uiPollution.getWidth() / 2f,
+                uiPollution.getHeight() / 2f, 0, 0, uiPollution.getWidth(), uiPollution.getHeight(), false, true);
+
+        batch.draw(uiMoney, 15, uiPower.getHeight() / 2f + uiPollution.getHeight() / 2f - 5, uiMoney.getWidth() / 2f,
+                uiMoney.getHeight() / 2f, 0, 0, uiMoney.getWidth(), uiMoney.getHeight(), false, true);
+
+
+
         batch.end();
+
     }
 
     @Override
@@ -187,11 +222,21 @@ public class Play extends State {
     }
 
     private void LoadContent() {
-        ContentManager.Instance.LoadTexture("Blank1", "Tiles/Grass-01.png");
-        ContentManager.Instance.LoadTexture("Blank2", "Tiles/Grass-02.png");
-        ContentManager.Instance.LoadTexture("Housing", "Tiles/Shack-01.png");
-        ContentManager.Instance.LoadTexture("Road", "Tiles/Path-01.png");
 
+        // Tiles
+        ContentManager.Instance.LoadTexture("Tile_Blank1", "Tiles/Grass3D.png");
+        ContentManager.Instance.LoadTexture("Tile_Blank2", "Tiles/Grass3D.png");
+        ContentManager.Instance.LoadTexture("Tile_Housing", "Tiles/Shack-01.png");
+        ContentManager.Instance.LoadTexture("Tile_Road", "Tiles/Path-01.png");
+
+        // UI Elements
+        uiPower = ContentManager.Instance.LoadTexture("UI_Power", "UI/PowerBar.png");
+        uiPollution = ContentManager.Instance.LoadTexture("UI_Pollution", "UI/PollutionBar.png");
+        uiMoney = ContentManager.Instance.LoadTexture("UI_Money", "UI/Money.png");
+
+        // Fonts
         font = ContentManager.Instance.LoadFont("TekoR", "Teko-Regular.ttf", 30);
+
+        // TODO: Sounds and Music
     }
 }
