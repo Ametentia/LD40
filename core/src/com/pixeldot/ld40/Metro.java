@@ -49,7 +49,7 @@ public class Metro extends ApplicationAdapter {
 
 	    // Create Game state manager and add the first state
 	    gsm = new GameStateManager(this);
-	    gsm.AddState(StateType.Play);
+	    gsm.AddState(StateType.PIXELDOT);
 	    timeSince = System.nanoTime();
 	}
 

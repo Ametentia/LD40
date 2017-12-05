@@ -23,10 +23,6 @@ public class Play extends State {
     }
 
     public void update(float dt) {
-        if(!openState) {
-            gsm.AddState(StateType.MINIGAME_SHEEPJUMP);
-            openState = true;
-        }
         if(!songs[songPlay].isPlaying()) {
             songPlay=(songPlay+1)%5;
             songs[songPlay].setVolume(0.4f);

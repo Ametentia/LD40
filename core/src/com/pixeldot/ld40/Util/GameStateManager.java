@@ -2,6 +2,7 @@ package com.pixeldot.ld40.Util;
 
 import com.pixeldot.ld40.Metro;
 import com.pixeldot.ld40.MiniGames.*;
+import com.pixeldot.ld40.State.PixeldotSplash;
 import com.pixeldot.ld40.State.Play;
 
 import java.util.Stack;
@@ -33,6 +34,8 @@ public class GameStateManager {
                 return new Sheep(this, states.peek());
             case MINIGAME_PIPEGAME:
                 return new PipeGame(this, states.peek());
+            case PIXELDOT:
+                return new PixeldotSplash(this);
             // TODO(Pixel): Implement
             case Menu:
             case EndScreen:

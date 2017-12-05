@@ -79,8 +79,7 @@ public class PipeGame extends MiniGame{
             mouseDown=false;
         }
         if(pipes[9][9].isFull()) {
-            //gsm.RemoveState();
-            generateRoute();
+            gsm.RemoveState();
         }
     }
     private void clearPipes() {
