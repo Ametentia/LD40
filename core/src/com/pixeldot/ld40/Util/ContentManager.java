@@ -25,6 +25,9 @@ public class ContentManager {
         sounds = new HashMap<String, Sound>();
         music = new HashMap<String, Music>();
     }
+    public boolean CheckTexture(String name) {
+        return textures.containsKey(name);
+    }
 
     public Texture GetTexture(String name) {
         if(!textures.containsKey(name))
@@ -88,7 +91,7 @@ public class ContentManager {
         return font;
     }
 
-    public Sound GetSound(String name, String path) {
+    public Sound LoadSound(String name, String path) {
         if(sounds.containsKey(name)) {
             System.err.println("Warning: A sound with the name \"" + name + "\" was already loaded, not overwriting.");
             return sounds.get(name);
@@ -100,7 +103,7 @@ public class ContentManager {
         return sound;
     }
 
-    public Music GetMusic(String name, String path) {
+    public Music LoadMusic(String name, String path) {
         if(sounds.containsKey(name)) {
             System.err.println("Warning: Music with the name \"" + name + "\" was already loaded, not overwriting.");
             return music.get(name);

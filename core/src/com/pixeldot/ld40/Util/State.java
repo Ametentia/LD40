@@ -30,7 +30,7 @@ public abstract class State {
         mouse = new Vector3(0, 0, 0);
     }
 
-    public abstract void Update(float dt);
-    public abstract void Render();
-    public void Dispose() {}
+    public abstract void update(float dt);
+    public abstract void render();
+    public void dispose() {}
 }

@@ -29,6 +29,9 @@ public class Metro extends ApplicationAdapter {
 	private SpriteBatch batch;
     private ShapeRenderer renderer;
 
+    // Updating
+	private long timeSince;
+
 
 	public void create () {
 
@@ -43,14 +46,19 @@ public class Metro extends ApplicationAdapter {
 
 
 
+
 	    // Create Game state manager and add the first state
 	    gsm = new GameStateManager(this);
 	    gsm.AddState(StateType.Play);
+	    timeSince = System.nanoTime();
 	}
 
 	public void render () {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		if(System.nanoTime()-timeSince > 1/60f * 1000000)
+			gsm.Update(1/60f);
+		gsm.Render();
 	}
 
 	public void dispose () {}
@@ -59,4 +67,8 @@ public class Metro extends ApplicationAdapter {
     public SpriteBatch getBatch() { return batch; }
     public ShapeRenderer getRenderer() { return renderer; }
     public OrthographicCamera getCamera() { return camera; }
+
+	public void resize(int width, int height) {
+		viewport.update(width, height, true);
+	}
 }

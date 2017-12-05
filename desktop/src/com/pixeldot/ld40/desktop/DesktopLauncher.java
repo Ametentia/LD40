@@ -12,6 +12,7 @@ public class DesktopLauncher {
 		// Window size
 		config.height = Metro.W_HEIGHT;
 		config.width = Metro.W_WIDTH;
+		config.foregroundFPS = 60;
 
 		// Prevent resizing of the window
 		config.resizable = false;
