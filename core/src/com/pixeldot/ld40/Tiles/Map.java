@@ -75,26 +75,6 @@ public class Map {
         }
     }
 
-    public void selectTile(int x, int y) {
-        if(x < 0 || x >= xGrid) return;
-        else if(y < 0 || y >= yGrid) return;
-
-        BaseTile tile = grid[x][y];
-        if(tile != null) {
-            tile.setSelected(true);
-            if(tile.getType() == TileType.Reactor) {
-                tile = grid[x + 1][y - 1];
-                if(tile.getType() == TileType.Reactor)
-                    tile.setSelected(true);
-                else
-                    grid[x - 1][y + 1].setSelected(true);
-            }
-        }
-        else {
-            // TODO(James): Deal with NULL
-        }
-
-    }
 
     public boolean placeTile(Player player, TileType type, int x, int y) {
         if(x < 0 || x >= xGrid) return false;
@@ -102,7 +82,12 @@ public class Map {
 
         BaseTile tile = grid[x][y];
         if(tile == null) return false;
-        else if(tile.getType() != TileType.Grass) return false;
+        else if(tile.getType() != TileType.Grass) {
+
+            selected = tile;
+            player.setMinigame(tile.getType());
+            return false;
+        }
 
         switch (type) {
             case Road: {
@@ -282,5 +267,10 @@ public class Map {
 
     public void setCurrent(TileType current) {
         this.current = current;
+    }
+
+    public void reset() { selected = null; }
+    public BaseTile getSelected() {
+         return selected;
     }
 }

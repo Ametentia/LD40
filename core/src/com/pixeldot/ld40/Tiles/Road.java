@@ -25,6 +25,7 @@ public class Road extends BaseTile {
         else tile.setColor(Color.WHITE);
 
         tile.draw(batch);
+        super.render(batch);
     }
 
     // Road Tile type

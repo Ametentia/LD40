@@ -18,11 +18,14 @@ public class Well extends BaseTile {
 
         float z = -(tile.getHeight() - Size) + ((tile.getWidth() - Size) / 4f);
         tile.translate(0, z);
+
+
     }
 
     @Override
     public void render(SpriteBatch batch) {
         tile.draw(batch);
+        super.render(batch);
     }
 
 

@@ -27,6 +27,8 @@ public class TownHall extends BaseTile {
         if(selected) tile.setColor(Color.GRAY);
         else tile.setColor(Color.WHITE);
         tile.draw(batch);
+
+        super.render(batch);
     }
 
     public TileType getType() {

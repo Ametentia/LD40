@@ -25,6 +25,8 @@ public class Hospital extends BaseTile {
     @Override
     public void render(SpriteBatch batch) {
         tile.draw(batch);
+
+        super.render(batch);
     }
 
     public TileType getType() {

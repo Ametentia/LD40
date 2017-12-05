@@ -1,9 +1,11 @@
 package com.pixeldot.ld40.Tiles;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.pixeldot.ld40.Entities.Tiles.TileParam;
 import com.pixeldot.ld40.Entities.Tiles.TileType;
+import com.pixeldot.ld40.Util.ContentManager;
 import com.pixeldot.ld40.Util.Vars;
 
 public abstract class BaseTile {
@@ -14,6 +16,10 @@ public abstract class BaseTile {
     protected Vector2 isoPosition;
 
     protected boolean selected;
+
+    protected float timeSince;
+    protected float limit = 10;
+    protected boolean minigame;
 
     // TODO(James): Implement!
     protected TileParam params;
@@ -28,9 +34,22 @@ public abstract class BaseTile {
         params = new TileParam(getType());
     }
 
-    public void update(float dt) {}
+    public void update(float dt) {
+        timeSince += dt;
+        if(dt >= limit) {
+            dt = 0;
+            minigame = true;
+        }
+    }
 
-    public abstract void render(SpriteBatch batch);
+    public void render(SpriteBatch batch) {
+        if(minigame) {
+            Sprite warn = new Sprite(ContentManager.Instance.GetTexture("UI_Warning"));
+            warn.setPosition(isoPosition.x, isoPosition.y);
+            warn.setFlip(false, true);
+            warn.draw(batch);
+        }
+    }
 
     public abstract TileType getType();
 

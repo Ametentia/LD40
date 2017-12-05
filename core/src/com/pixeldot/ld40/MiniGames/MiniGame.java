@@ -1,8 +1,6 @@
 package com.pixeldot.ld40.MiniGames;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.pixeldot.ld40.Metro;
 import com.pixeldot.ld40.Util.ContentManager;
 import com.pixeldot.ld40.Util.GameStateManager;
@@ -12,7 +10,7 @@ import com.pixeldot.ld40.Util.State;
  * @author Matthew Threlfall
  */
 public abstract class MiniGame extends State {
-    private State background;
+    protected State background;
     private int x = (Metro.W_WIDTH/4);
     private int y = (Metro.W_HEIGHT/8);
     private int boarderX = x + Metro.W_WIDTH/70;

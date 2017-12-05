@@ -1,6 +1,7 @@
 package com.pixeldot.ld40.Entities;
 
 import com.pixeldot.ld40.Entities.Tiles.TileParam;
+import com.pixeldot.ld40.Entities.Tiles.TileType;
 
 public class Player {
 
@@ -20,6 +21,8 @@ public class Player {
     private float pollution;
     private int population;
 
+    private TileType minigame;
+
     // Between 0 and 1
     private float satisfaction;
 
@@ -37,6 +40,8 @@ public class Player {
         population = 0;
 
         accumulator = 0;
+
+        minigame = null;
     }
 
     public void update(float dt) {
@@ -108,6 +113,16 @@ public class Player {
 
     public void setPopulation(int population) {
         this.population = population;
+    }
+
+    public TileType getMinigame() {
+        TileType ret = minigame;
+        minigame = null;
+        return ret;
+    }
+
+    public void setMinigame(TileType type) {
+        minigame = type;
     }
 
     public boolean takeMoney(int amount) {

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.pixeldot.ld40.State.Play;
 import com.pixeldot.ld40.Util.ContentManager;
 import com.pixeldot.ld40.Util.GameStateManager;
 import com.pixeldot.ld40.Util.State;
@@ -79,8 +80,8 @@ public class PipeGame extends MiniGame{
             mouseDown=false;
         }
         if(pipes[9][9].isFull()) {
-            //gsm.RemoveState();
-            generateRoute();
+            gsm.RemoveState();
+            if(background instanceof Play) ((Play)background).setFocus();
         }
     }
     private void clearPipes() {

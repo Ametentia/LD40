@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.pixeldot.ld40.State.Play;
 import com.pixeldot.ld40.Util.Animation;
 import com.pixeldot.ld40.Util.ContentManager;
 import com.pixeldot.ld40.Util.GameStateManager;
@@ -35,7 +36,7 @@ public class Sheep extends MiniGame{
 
     public Sheep(GameStateManager gsm, State previous) {
         super(gsm, previous);
-        successCount = 90;
+        successCount = 10;
         sheepSpeed = 240;
 
         DIE = ContentManager.Instance.GetSound("DIE_SHEEP");
@@ -120,6 +121,7 @@ public class Sheep extends MiniGame{
         }
         if(sheepCount == successCount) {
             gsm.RemoveState();
+            if(background instanceof Play) ((Play)background).setFocus();
         }
     }
 }

@@ -3,14 +3,13 @@ package com.pixeldot.ld40.MiniGames;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.pixeldot.ld40.Metro;
+import com.pixeldot.ld40.State.Play;
 import com.pixeldot.ld40.Util.ContentManager;
 import com.pixeldot.ld40.Util.GameStateManager;
 import com.pixeldot.ld40.Util.State;
@@ -93,6 +92,7 @@ public class ConnectTheDots extends MiniGame {
         }
         if(successCount < dotsHit) {
             gsm.RemoveState();
+            if(background instanceof Play) ((Play)background).setFocus();
         }
     }
     public void render() {

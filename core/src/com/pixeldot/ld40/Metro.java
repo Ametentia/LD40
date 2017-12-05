@@ -45,7 +45,7 @@ public class Metro extends ApplicationAdapter {
 	    hudCamera = new OrthographicCamera();
 	    hudCamera.setToOrtho(true, W_WIDTH, W_HEIGHT);
 
-	    viewport = new ExtendViewport(1920, 1080, camera);
+	    viewport = new ExtendViewport(W_WIDTH, W_HEIGHT, camera);
 	    viewport.apply();
 
 	    batch = new SpriteBatch();
