@@ -33,6 +33,9 @@ public class Metro extends ApplicationAdapter {
 	private SpriteBatch batch;
     private ShapeRenderer renderer;
 
+    // Updating
+	private long timeSince;
+
 
 	public void create () {
 
@@ -50,7 +53,8 @@ public class Metro extends ApplicationAdapter {
 
 	    // Create Game state manager and add the first state
 	    gsm = new GameStateManager(this);
-	    gsm.AddState(StateType.Testing);
+	    gsm.AddState(StateType.Play);
+	    timeSince = System.nanoTime();
 	}
 
     public void render () {

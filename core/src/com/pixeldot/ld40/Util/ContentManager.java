@@ -26,6 +26,9 @@ public class ContentManager {
         sounds = new HashMap<String, Sound>();
         music = new HashMap<String, Music>();
     }
+    public boolean CheckTexture(String name) {
+        return textures.containsKey(name);
+    }
 
     public Texture GetTexture(String name) {
         if(!textures.containsKey(name))
