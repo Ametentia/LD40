@@ -36,8 +36,8 @@ public abstract class BaseTile {
 
     public void update(float dt) {
         timeSince += dt;
-        if(dt >= limit) {
-            dt = 0;
+        if(timeSince >= limit) {
+            timeSince = 0;
             minigame = true;
         }
     }

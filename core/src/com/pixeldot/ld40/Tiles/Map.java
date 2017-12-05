@@ -34,7 +34,14 @@ public class Map {
         current = TileType.Grass;
     }
 
-    public void update(float dt) {}
+    public void update(float dt) {
+        for(int i = 0; i < xGrid; i++) {
+            for(int j = 0; j <yGrid; j++) {
+                if(grid[i][j] == null) continue;
+                grid[i][j].update(dt);
+            }
+        }
+    }
 
     public void render(SpriteBatch batch, int x, int y) {
         for(int i = 0; i < xGrid; i++) {
@@ -77,12 +84,13 @@ public class Map {
 
 
     public boolean placeTile(Player player, TileType type, int x, int y) {
+        selected = null;
         if(x < 0 || x >= xGrid) return false;
         else if(y < 0 || y >= yGrid) return false;
 
         BaseTile tile = grid[x][y];
         if(tile == null) return false;
-        else if(tile.getType() != TileType.Grass) {
+        else if(tile.getType() != TileType.Grass && selected == null) {
 
             selected = tile;
             player.setMinigame(tile.getType());

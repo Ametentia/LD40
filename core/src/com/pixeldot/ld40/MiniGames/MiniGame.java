@@ -6,6 +6,9 @@ import com.pixeldot.ld40.Util.ContentManager;
 import com.pixeldot.ld40.Util.GameStateManager;
 import com.pixeldot.ld40.Util.State;
 
+import static com.pixeldot.ld40.Metro.W_HEIGHT;
+import static com.pixeldot.ld40.Metro.W_WIDTH;
+
 /**
  * @author Matthew Threlfall
  */
@@ -27,6 +30,9 @@ public abstract class MiniGame extends State {
     public MiniGame(GameStateManager gsm, State background) {
         super(gsm);
         this.background = background;
+        camera.setToOrtho(true, W_WIDTH, W_HEIGHT);
+        viewport.apply();
+
         texture.setFlip(false, true);
     }
     public void update(float dt) {

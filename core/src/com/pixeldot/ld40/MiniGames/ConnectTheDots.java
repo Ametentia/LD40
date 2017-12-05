@@ -14,6 +14,9 @@ import com.pixeldot.ld40.Util.ContentManager;
 import com.pixeldot.ld40.Util.GameStateManager;
 import com.pixeldot.ld40.Util.State;
 
+import static com.pixeldot.ld40.Metro.W_HEIGHT;
+import static com.pixeldot.ld40.Metro.W_WIDTH;
+
 /**
  * @author Matthew Threlfall
  */
@@ -30,9 +33,12 @@ public class ConnectTheDots extends MiniGame {
     public ConnectTheDots(GameStateManager gsm, State previousState) {
 
         super(gsm, previousState);
+
+        camera.setToOrtho(true, W_WIDTH, W_HEIGHT);
+        viewport.apply();
         dots = new Dot[6];
         sounds = ContentManager.Instance.GetSound("getDot1");
-        successCount = 150;
+        successCount = 16;
         dotCount = 0;
         dotsHit = 0;
         dotCounter = 0;

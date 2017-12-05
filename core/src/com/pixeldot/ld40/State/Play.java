@@ -40,6 +40,8 @@ public class Play extends State {
 
     private boolean focus;
 
+    private boolean mClick;
+
     public Play(GameStateManager gsm) {
         super(gsm);
 
@@ -70,7 +72,8 @@ public class Play extends State {
             if (canMove && !moving) {
                 moving = true;
                 start = new Vector2(mouse.x, mouse.y);
-            } else if (canMove || moving) {
+            }
+            else if (canMove || moving) {
                 end = new Vector2(mouse.x, mouse.y);
                 camera.translate(start.sub(end));
                 start.set(end);
@@ -83,7 +86,7 @@ public class Play extends State {
             camera.update();
 
 
-            if (!canMove && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (!canMove && Gdx.input.isButtonPressed(Input.Buttons.LEFT) && !mClick) {
                 int y = (int) (((2 * mouse.y - mouse.x) / 2f) / BaseTile.Size + 0.5f);
                 int x = (int) (((2 * mouse.y + mouse.x) / 2f) / BaseTile.Size);
 
@@ -124,7 +127,9 @@ public class Play extends State {
 
         if(focus) {
             TileType mini = player.getMinigame();
-            if (mini != null && map.getSelected() != null) {
+            if (mini != null && map.getSelected() != null && map.getSelected().getType() == mini) {
+                System.out.println("Mini: " + mini);
+                System.out.println("Selected: " + map.getSelected().getType());
                 switch (mini) {
                     case Hospital:
                         gsm.AddState(StateType.MINIGAME_POLICE);
@@ -149,6 +154,8 @@ public class Play extends State {
 
             map.reset();
         }
+
+        mClick = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
     }
 
     public void render() {
@@ -278,6 +285,8 @@ public class Play extends State {
         ContentManager.Instance.LoadTexture("UI_Power", "UI/PowerBar-1.png");
         ContentManager.Instance.LoadTexture("UI_Water", "UI/WaterBar.png");
         ContentManager.Instance.LoadTexture("UI_Rating", "UI/SatisfactionBar.png");
+
+        ContentManager.Instance.LoadTexture("UI_Warning", "UI/Warning.png");
 
         // Tooltip
         ContentManager.Instance.LoadTexture("Tooltip_1", "UI/Tooltip/Road.png");
