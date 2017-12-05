@@ -1,8 +1,10 @@
 package com.pixeldot.ld40.Entities;
 
+import com.pixeldot.ld40.Entities.Tiles.TileParam;
+
 public class Player {
 
-    private static final float PowerWeight = 2.4f;
+    private static final float PowerWeight = 10.4f;
     private static final float WaterWeight = 3.2f;
     private static final float PollutionWeight = 6.4f;
 
@@ -41,7 +43,7 @@ public class Player {
         accumulator += dt;
         if(accumulator < 1) return;
 
-        money += income;
+        money += (income + excessPower + excessWater);
         money -= outcome;
 
         satisfaction = (money + (PowerWeight * excessPower) + (WaterWeight * excessWater))
@@ -50,6 +52,38 @@ public class Player {
 
 
         accumulator = 0;
+    }
+
+    public void updateParams(TileParam params) {
+        population = params.population;
+
+        pollution = params.pollution;
+
+        outcome = params.moneyIntake;
+        income = params.moneyOutput;
+
+        excessPower = params.powerOutput - params.powerIntake;
+        excessWater = params.waterOutput - params.waterIntake;
+    }
+
+    public float getExcessPower() {
+        return excessPower;
+    }
+
+    public float getExcessWater() {
+        return excessWater;
+    }
+
+    public float getPollution() {
+        return pollution;
+    }
+
+    public int getPopulation() {
+        return population;
+    }
+
+    public float getSatisfaction() {
+        return satisfaction;
     }
 
     public void setPollution(float pollution) {
@@ -76,14 +110,23 @@ public class Player {
         this.population = population;
     }
 
+    public boolean takeMoney(int amount) {
+        if(money < amount) return false;
+
+        money -= amount;
+        return true;
+    }
+
     public String toString() {
         return "City Stats: [\n" +
                 "Money: " + money + "\n" +
                 "Power: " + excessPower + "\n" +
                 "Water: " + excessWater + "\n" +
+                "Pollution: " + pollution + "\n" +
                 "Satisfaction: " + satisfaction + "\n" +
                 "Income: " + income + "\n" +
                 "Outcome: " + outcome + "\n" +
+                "Population: " + population + "\n" +
                 "\n]";
     }
 }

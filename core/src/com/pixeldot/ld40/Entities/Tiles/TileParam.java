@@ -9,6 +9,8 @@ public class TileParam {
 
     public float pollution;
 
+    public int population;
+
     public float moneyIntake;
     public float moneyOutput;
 
@@ -24,4 +26,6 @@ public class TileParam {
         moneyIntake = type.moneyIntake;
         moneyOutput = type.moneyOutput;
     }
+
+    public TileParam() {}
 }

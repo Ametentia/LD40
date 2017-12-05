@@ -1,11 +1,17 @@
 package com.pixeldot.ld40.Entities.Tiles;
 
 public enum TileType {
-    Housing(20, 0, 20, 0, 4, 30, 60),
-   // Power(10, 100, 40, 0, 50, 100, 0),
-   // Water(20, 0, 100, 0, 40, 100, 0),
-    Road(5, 0, 0, 0, 5, 20, 0),
-    Blank(0, 0, 0, 0, 0, 0, 0);
+    Grass(0, 0, 0, 0, 0, 0, 0),
+
+    Road(0, 0, 0, 0, 0, 0, 0),
+
+    TownHall(60, 0, 60, 0, 50, 700, 100),
+
+    Housing(75, 0, 75, 0, 50, 0, 75),
+    Reactor(0, 250, 100, 0, 250, 300, 0),
+    School(50, 0, 50, 0, 5, 500, 0),
+    Hospital(100, 0, 100, 0, 100, 300, 0),
+    Water(0, 0, 0, 250, 0, 50, 0);
 
     public final float powerIntake;
     public final float powerOutput;

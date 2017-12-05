@@ -13,17 +13,14 @@ public class GameStateManager {
     public GameStateManager(Metro metro) {
         this.metro = metro;
 
-        states = new Stack<State>();
+        states = new Stack<>();
     }
 
     private State GetState(StateType type) {
         switch (type) {
             case Play:
+            case Testing:
                 return new Play(this);
-
-            // TODO(Pixel): Implement
-            case Menu:
-            case EndScreen:
             default:
                 throw new IllegalArgumentException("Error: This is implemented yet!");
         }

@@ -9,234 +9,241 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pixeldot.ld40.Entities.Player;
-import com.pixeldot.ld40.Entities.Tiles.Tile;
 import com.pixeldot.ld40.Entities.Tiles.TileParam;
-import com.pixeldot.ld40.Entities.Tiles.TileType;
+import com.pixeldot.ld40.Tiles.BaseTile;
+import com.pixeldot.ld40.Tiles.Map;
 import com.pixeldot.ld40.Util.ContentManager;
 import com.pixeldot.ld40.Util.GameStateManager;
+import com.pixeldot.ld40.Util.InputHandler;
 import com.pixeldot.ld40.Util.State;
 
-import java.util.Random;
-
-import static com.pixeldot.ld40.Metro.W_WIDTH;
+import static com.pixeldot.ld40.Metro.W_HEIGHT;
 
 public class Play extends State {
 
-    private static final int GridSize = 20;
+    private int GridSize = 60;
+    private Map map;
 
+    // Camera movement
     private Vector2 start, end;
     private boolean moving;
 
-    private BitmapFont font;
-
-    // UI Textures
-    private Texture uiPollution;
-    private Texture uiPower;
-    private Texture uiMoney;
-
-    private Tile[][] grid;
     private Player player;
 
-    private Tile prev;
+    private BitmapFont font;
 
-    private float accumulator;
+    private InputHandler input;
 
     public Play(GameStateManager gsm) {
         super(gsm);
 
-        // Load Content
-        LoadContent();
-        generateGrid();
+        loadContent();
+
+        map = new Map(GridSize, GridSize);
+
+        input = new InputHandler();
+        Gdx.input.setInputProcessor(input);
 
         player = new Player();
-        player.setExcessPower(2003);
-        player.setExcessWater(219);
-        player.setPopulation(20000);
 
-        accumulator = 0;
     }
 
     public void Update(float dt) {
-        accumulator += dt;
-
         mouse.set(camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0)));
 
+        boolean canMove = Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)
+                && Gdx.input.isButtonPressed(Input.Buttons.LEFT);
+
         // Camera panning with mouse
-        if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT) && !moving) {
+        if(canMove && !moving) {
             moving = true;
             start = new Vector2(mouse.x, mouse.y);
         }
-        else if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT) || moving) {
+        else if(canMove || moving) {
             end = new Vector2(mouse.x, mouse.y);
             camera.translate(start.sub(end));
             start.set(end);
             moving = false;
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            generateGrid();
+
+        camera.zoom += (0.1 * input.getScrollValue());
+        camera.zoom = Math.max(Math.min(camera.zoom, 5), 0.25f);
+        camera.update();
+
+        if(!canMove && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            int y = (int) (((2 * mouse.y - mouse.x) / 2f) / BaseTile.Size + 0.5f);
+            int x = (int) (((2 * mouse.y + mouse.x) / 2f) / BaseTile.Size);
+
+            //map.selectTile(x, y);
+            map.placeTile(player, input.getCurrent(), x, y);
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT_BRACKET)) {
-            camera.zoom *= 0.5f;
-        }
-        else if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT_BRACKET)) {
-            camera.zoom /= 0.5f;
-        }
+        if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            int y = (int) (((2 * mouse.y - mouse.x) / 2f) / BaseTile.Size + 0.5f);
+            int x = (int) (((2 * mouse.y + mouse.x) / 2f) / BaseTile.Size);
 
-
-        float pollution = 0;
-        float power = 0, rqPower = 0;
-        float water = 0, rqWater = 0;
-        float income = 0, outcome = 0;
-
-        for(int i = 0; i < GridSize; ++i) {
-            for(int j = 0; j < GridSize; ++j) {
-                final TileParam params = grid[i][j].getParams();
-                power += params.powerOutput;
-                rqPower += params.powerIntake;
-
-                pollution += params.pollution;
-
-                water += params.waterOutput;
-                rqWater += params.waterIntake;
-
-                income += params.moneyOutput;
-                outcome += params.moneyIntake;
-            }
+            map.removeTile(x, y);
         }
 
-        int x = (int) ((2 * mouse.y + mouse.x) / 2f) / Tile.Size;
-        int y = (int) ((2 * mouse.y - mouse.x) / 2f) / Tile.Size;
+        TileParam params = new TileParam();
+        map.getParams(params);
 
-        if(x < 20 && x > 0 && y < 20 && y > 0) {
-            if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                if(prev != null) prev.debugOverlay = null;
-                prev = grid[Math.abs(x)][Math.abs(y)];
-                prev.debugOverlay = Color.GRAY;
-            }
-        }
-
-        if(prev != null) {
-            if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-
-                int ordinal = prev.getType().ordinal() - 1 < 0 ?
-                        TileType.values()[TileType.values().length - 1].ordinal() :
-                        prev.getType().ordinal() - 1;
-
-                TileType type = TileType.values()[ordinal];
-                prev.setType(type);
-            }
-            else if(Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-                int len = TileType.values().length;
-                int ordinal = prev.getType().ordinal() + 1 >= len ?
-                        0 :
-                        prev.getType().ordinal() + 1;
-
-                TileType type = TileType.values()[ordinal];
-                prev.setType(type);
-            }
-        }
-
-        player.setPollution(pollution);
-
-        player.setExcessPower(power - rqPower);
-        player.setExcessWater(water - rqWater);
-
-        player.setOutcome(outcome);
-        player.setIncome(income);
-
+        player.updateParams(params);
         player.update(dt);
 
-        camera.update();
+        map.setCurrent(input.getCurrent());
+
+
+        input.resetScroll();
     }
 
     public void Render() {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        int y = (int) (((2 * mouse.y - mouse.x) / 2f) / BaseTile.Size + 0.5f);
+        int x = (int) (((2 * mouse.y + mouse.x) / 2f ) / BaseTile.Size);
 
-        for(int i = 0; i < GridSize; ++i) {
-            for(int j = 0; j < GridSize; j++) {
-                grid[i][j].render(batch);
-            }
-        }
+        map.render(batch, x, y);
 
         batch.end();
 
         renderer.setProjectionMatrix(hudCamera.combined);
-        renderer.setColor(Color.GREEN);
         renderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        renderer.rect(10, 15, uiPower.getWidth() / 5.7f, uiPower.getHeight() / 7f);
-        renderer.rect(10 + uiPower.getWidth() / 5.7f, 15, uiPower.getWidth() / 5.7f, uiPower.getHeight() / 5f);
-        renderer.rect(10 +
-                uiPower.getWidth() / 5.7f +
-                45, 15,
-                uiPower.getWidth() / 5.7f, uiPower.getHeight() / 4.8f);
+
+        renderer.setColor(Color.WHITE);
+        renderer.rect(33, 33, 220, 20);
+        renderer.rect(20, 90, 215, 20);
+        renderer.rect(24, 155, 208, 20);
+        renderer.rect(380, 30, 465, 50);
+
+        renderer.setColor(new Color(77 / 255f, 1, 77 / 255f, 1));
+        float width = Math.min((player.getPollution() / 7500f) * 220, 220);
+        renderer.rect(33, 33, width, 20);
+
+        renderer.setColor(Color.YELLOW);
+        width = Math.max(Math.min((player.getExcessPower() / 3000f) * 215, 215), 0);
+        renderer.rect(20, 90, width, 20);
+
+        renderer.setColor(new Color((100 / 255f), (149 / 255f), (237 / 255f), 1f));
+        width = Math.max(Math.min((player.getExcessWater() / 3000f) * 210, 210), 0);
+        renderer.rect(24, 155, width, 20);
+
+        float clamp = Math.max(Math.min(player.getSatisfaction(), 1), 0);
+
+        Color c = new Color(Color.RED);
+        renderer.setColor(c.lerp(Color.GREEN, clamp));
+        width = clamp * 465;
+        renderer.rect(380, 30, width, 50);
+
 
         renderer.end();
 
         batch.setProjectionMatrix(hudCamera.combined);
         batch.begin();
-        mouse.set(camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0)));
-        font.draw(batch, player.toString(), W_WIDTH - 200, 20);
+        Texture ui = ContentManager.Instance.GetTexture("UI_Pollution");
+        batch.draw(ui, 5, 5, ui.getWidth() / 2f, ui.getHeight() / 2f, 0, 0, ui.getWidth(), ui.getHeight(), false, true);
 
-        batch.draw(uiPower, 0, 0, uiPower.getWidth() / 2f,
-                uiPower.getHeight() / 2f, 0, 0, uiPower.getWidth(), uiPower.getHeight(), false, true);
+        ui = ContentManager.Instance.GetTexture("UI_Power");
+        batch.draw(ui, 5, 75, ui.getWidth() / 2f, ui.getHeight() / 2f, 0, 0, ui.getWidth(), ui.getHeight(), false, true);
 
-        batch.draw(uiPollution, 0, uiPower.getHeight() / 2f - 5, uiPollution.getWidth() / 2f,
-                uiPollution.getHeight() / 2f, 0, 0, uiPollution.getWidth(), uiPollution.getHeight(), false, true);
+        ui = ContentManager.Instance.GetTexture("UI_Water");
+        batch.draw(ui, 5, 135, ui.getWidth() / 2f, ui.getHeight() / 2f, 0, 0, ui.getWidth(), ui.getHeight(), false, true);
 
-        batch.draw(uiMoney, 15, uiPower.getHeight() / 2f + uiPollution.getHeight() / 2f - 5, uiMoney.getWidth() / 2f,
-                uiMoney.getHeight() / 2f, 0, 0, uiMoney.getWidth(), uiMoney.getHeight(), false, true);
+        ui = ContentManager.Instance.GetTexture("UI_Rating");
+        batch.draw(ui, 350, 5, ui.getWidth() / 2f, ui.getHeight() / 2f, 0, 0, ui.getWidth(), ui.getHeight(), false, true);
+
+        if(clamp > 0.75f) {
+            ui = ContentManager.Instance.GetTexture("Face_Happy");
+        }
+        else if(clamp < 0.75f && clamp > 0.25f) {
+            ui = ContentManager.Instance.GetTexture("Face_Medium");
+        }
+        else if(clamp < 0.5f && clamp > 0.1f) {
+            ui = ContentManager.Instance.GetTexture("Face_Angry");
+        }
+        else {
+            ui = ContentManager.Instance.GetTexture("Face_Skull");
+        }
+
+        batch.draw(ui, 350, 5, ui.getWidth() / 2f, ui.getHeight() / 2f, 0, 0, ui.getWidth(), ui.getHeight(), false, true);
+
+        ui = ContentManager.Instance.GetTexture("UI_Foundation");
+        batch.draw(ui, 1030, 5, ui.getWidth() / 1.8f, ui.getHeight() / 1.8f, 0, 0, ui.getWidth(), ui.getHeight(), false, true);
 
 
+        float prevX = 30;
+        for(int i = 1; i < 8; i++) {
+
+            ui = ContentManager.Instance.GetTexture("Tooltip_" + i);
+            batch.draw(ui, prevX, W_HEIGHT - 100, ui.getWidth() / 3f, ui.getHeight() / 3f,
+                    0, 0, ui.getWidth(), ui.getHeight(), false, true);
+            prevX = prevX + ui.getWidth() / 3f;
+
+        }
 
         batch.end();
 
     }
 
-    @Override
-    public void Dispose() {
+    private void loadContent() {
+        // Grass
+        ContentManager.Instance.LoadTexture("Tile_Grass0", "Tiles/Grass3D.png");
+        ContentManager.Instance.LoadTexture("Tile_Grass1", "Tiles/Grass3D2.png");
 
-    }
-
-
-    private void generateGrid() {
-        Random random = new Random();
-
-        grid = new Tile[GridSize][GridSize];
-        for(int i = 0; i < GridSize; ++i) {
-            for(int j = 0; j < GridSize; ++j) {
-                TileType type = TileType.Blank;
-                if(random.nextInt() % 10 == 0) {
-                    type = TileType.Housing;
-                }
-                else if(random.nextInt() % 4 == 0) {
-                    type = TileType.Road;
-                }
-                grid[i][j] = new Tile(type, i, j);
-            }
-        }
-    }
-
-    private void LoadContent() {
-
-        // Tiles
-        ContentManager.Instance.LoadTexture("Tile_Blank1", "Tiles/Grass3D.png");
-        ContentManager.Instance.LoadTexture("Tile_Blank2", "Tiles/Grass3D.png");
-        ContentManager.Instance.LoadTexture("Tile_Housing", "Tiles/Shack-01.png");
+        // Road
         ContentManager.Instance.LoadTexture("Tile_Road", "Tiles/Path-01.png");
 
-        // UI Elements
-        uiPower = ContentManager.Instance.LoadTexture("UI_Power", "UI/PowerBar.png");
-        uiPollution = ContentManager.Instance.LoadTexture("UI_Pollution", "UI/PollutionBar.png");
-        uiMoney = ContentManager.Instance.LoadTexture("UI_Money", "UI/Money.png");
+        // Houses
+        ContentManager.Instance.LoadTexture("Tile_House", "Tiles/House.png");
 
-        // Fonts
-        font = ContentManager.Instance.LoadFont("TekoR", "Teko-Regular.ttf", 30);
+        // Reactor
+        ContentManager.Instance.LoadTexture("Tile_Reactor0", "Tiles/Reactor-L.png");
+        ContentManager.Instance.LoadTexture("Tile_Reactor1", "Tiles/Reactor-R.png");
 
-        // TODO: Sounds and Music
+        // Town Hall
+        ContentManager.Instance.LoadTexture("Tile_TownHall0", "Tiles/TownHall-L.png");
+        ContentManager.Instance.LoadTexture("Tile_TownHall1", "Tiles/TownHall-R.png");
+
+        // School
+        ContentManager.Instance.LoadTexture("Tile_School0", "Tiles/School-L.png");
+        ContentManager.Instance.LoadTexture("Tile_School1", "Tiles/School-R.png");
+
+        // Hospital
+        ContentManager.Instance.LoadTexture("Tile_Hospital0", "Tiles/Hospital-L.png");
+        ContentManager.Instance.LoadTexture("Tile_Hospital1", "Tiles/Hospital-M.png");
+        ContentManager.Instance.LoadTexture("Tile_Hospital2", "Tiles/Hospital-R.png");
+
+        // Well
+        ContentManager.Instance.LoadTexture("Tile_Well", "Tiles/Well.png");
+
+        // UI
+        ContentManager.Instance.LoadTexture("UI_Foundation", "UI/LevelFoundation.png");
+        ContentManager.Instance.LoadTexture("UI_Pollution", "UI/PollutionBar-1.png");
+        ContentManager.Instance.LoadTexture("UI_Power", "UI/PowerBar-1.png");
+        ContentManager.Instance.LoadTexture("UI_Water", "UI/WaterBar.png");
+        ContentManager.Instance.LoadTexture("UI_Rating", "UI/SatisfactionBar.png");
+
+        // Tooltip
+        ContentManager.Instance.LoadTexture("Tooltip_1", "UI/Tooltip/Road.png");
+        ContentManager.Instance.LoadTexture("Tooltip_2", "UI/Tooltip/House.png");
+        ContentManager.Instance.LoadTexture("Tooltip_3", "UI/Tooltip/TownHall.png");
+        ContentManager.Instance.LoadTexture("Tooltip_4", "UI/Tooltip/Reactor.png");
+        ContentManager.Instance.LoadTexture("Tooltip_5", "UI/Tooltip/School.png");
+        ContentManager.Instance.LoadTexture("Tooltip_6", "UI/Tooltip/Well.png");
+        ContentManager.Instance.LoadTexture("Tooltip_7", "UI/Tooltip/Hospital.png");
+
+        // Faces
+        ContentManager.Instance.LoadTexture("Face_Happy", "UI/HappyFace.png");
+        ContentManager.Instance.LoadTexture("Face_Medium", "UI/MediumFace.png");
+        ContentManager.Instance.LoadTexture("Face_Angry", "UI/AngryFace.png");
+        ContentManager.Instance.LoadTexture("Face_Skull", "UI/SkullFace.png");
+
+
+        font = ContentManager.Instance.LoadFont("Teko", "Teko-Regular.ttf", 20);
+
+
     }
 }
